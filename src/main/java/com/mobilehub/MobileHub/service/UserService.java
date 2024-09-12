@@ -92,14 +92,28 @@ public class UserService {
 //        return token;
             return null;
         }
-        public UserProfileDTO getUserProfile (Long id){
-            return null;
-        }
-        public UserDTO updateUser (Long useId, UserEditDTO userEditDTO){
-            return null;
-        }
-        public void changePassword (String login, String newPassword){
-        }
+    public UserProfileDTO getUserProfile(String login) {
+        User user = userRepository.findByLogin(login.trim())
+                .orElseThrow(() -> new UserNotFoundException("User with login '" + login + "' not found"));
+        return modelMapper.map(user, UserProfileDTO.class);
+    }
+
+    public UserDTO updateUser(String login, UserEditDTO userEditDTO) {
+        User user = userRepository.findByLogin(login.trim())
+                .orElseThrow(() -> new UserNotFoundException("User with login '" + login + "' not found"));
+
+        modelMapper.map(userEditDTO, user);
+        userRepository.save(user);
+
+        return modelMapper.map(user, UserDTO.class);
+    }
+    public void changePassword(String login, String newPassword) {
+        User user = userRepository.findByLogin(login.trim())
+                .orElseThrow(() -> new UserNotFoundException("User with login '" + login + "' not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
         @Transactional
         public UserDTO removeUser (String login){
 

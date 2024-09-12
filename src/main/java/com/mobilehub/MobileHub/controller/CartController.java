@@ -14,11 +14,11 @@ public class CartController {
     private  final CartService cartService;
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(
-            @RequestParam Long userId,
-            @RequestParam Long productId,
+            @RequestParam String login,
+            @RequestParam String productName,
             @RequestParam int quantity
     ) {
-        boolean added = cartService.addToCart(userId, productId, quantity);
+        boolean added = cartService.addToCart(login, productName, quantity);
         if (added) {
             return ResponseEntity.ok("Item added to cart successfully");
         } else {
@@ -26,19 +26,20 @@ public class CartController {
         }
     }
     @DeleteMapping("/delete")
-    public Boolean removeFromCart(@RequestParam Long userId,@RequestParam Long productId){
-        return  cartService.removeFromCart(userId,productId);
+    public Boolean removeFromCart(@RequestParam String login,
+                                  @RequestParam String productName){
+        return  cartService.removeFromCart(login,productName);
     }
-    @GetMapping("/get/{userId}")
-    public CartDTO getCart(@PathVariable Long userId){
-        return  cartService.getCart(userId);
+    @GetMapping("/get/{login}")
+    public CartDTO getCart(@PathVariable String login){
+        return  cartService.getCart(login);
     }
     @PutMapping("/update")
-    public CartItemDTO updateCartItem(@RequestParam  Long userId,
-                                      @RequestParam  Long productId,
+    public CartItemDTO updateCartItem(@RequestParam  String login,
+                                      @RequestParam  String productName,
                                       @RequestParam int quantity,
                                       @RequestParam Double price){
-
-        return  cartService.updateCartItem(userId,productId,quantity,price);
+        System.out.println("in updateCatItem");
+        return  cartService.updateCartItem(login,productName,quantity,price);
     }
 }

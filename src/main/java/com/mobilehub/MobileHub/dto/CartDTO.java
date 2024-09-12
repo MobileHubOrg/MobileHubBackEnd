@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 public class CartDTO {
     private Long cartId;
-    private Long userId;
+    private String login ;
     private List<CartItemDTO> cartItems;
 }

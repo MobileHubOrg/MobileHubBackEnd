@@ -2,6 +2,7 @@ package com.mobilehub.MobileHub.service;
 
 import com.mobilehub.MobileHub.dto.CartDTO;
 import com.mobilehub.MobileHub.dto.CartItemDTO;
+import com.mobilehub.MobileHub.exeption.CartItemNotFoundException;
 import com.mobilehub.MobileHub.exeption.CartNotFoundException;
 import com.mobilehub.MobileHub.exeption.ProductNotFoundException;
 import com.mobilehub.MobileHub.exeption.UserNotFoundException;
@@ -28,18 +29,20 @@ public class CartService {
     private final ProductRepository productRepository;
     private  final ModelMapper modelMapper;
 @Transactional
-    public Boolean addToCart(Long userId, Long productId, int quantity) {
+    public Boolean addToCart(String login, String productName, int quantity) {
         try {
-            Cart cart = cartRepository.findByUser_UserId(userId)
+            User user = userRepository.findByLogin(login)
+                    .orElseThrow(() -> new UserNotFoundException("User with login '" + login + "' not found"));
+            Cart cart = cartRepository.findCartByUser_Login(login)
                     .orElseGet(() -> {
-                        Cart newCart = createNewCart(userId);
+                        Cart newCart = createNewCart(user.getUserId());
                         if (newCart == null) {
-                            throw new RuntimeException("Failed to create new cart for user: " + userId);
+                            throw new RuntimeException("Failed to create new cart for user: " + login);
                         }
                         return newCart;
                     });
 
-        Product product=productRepository.findProductByProductId(productId).orElseThrow(()->new ProductNotFoundException("Poduct with productId '" + productId + "' not found"));
+        Product product=productRepository.findProductByProductName(productName).orElseThrow(()->new ProductNotFoundException("Poduct with productId '" + productName+ "' not found"));
 
         List<CartItem>cartItems=cart.getCartItems();
 //        CartItem existingCartItem=cartItems.stream()
@@ -61,7 +64,7 @@ public class CartService {
 //    }
 
             CartItem cartItem = cart.getCartItems().stream()
-                    .filter(item -> item.getProduct().getProductId().equals(productId))
+                    .filter(item -> item.getProduct().getProductId().equals(product.getProductId()))
                     .findFirst()
                     .orElseGet(() -> {
                         CartItem newItem = new CartItem(cart, product, 0, product.getPrice());
@@ -92,32 +95,40 @@ public class CartService {
         return  cartRepository.save(cart);
     }
 
-    public Boolean removeFromCart(Long userId, Long productId){
-        Cart cart = cartRepository.findByUser_UserId(userId)
+    public Boolean removeFromCart(String login, String productName){
+        Cart cart = cartRepository.findCartByUser_Login(login)
                 .orElseThrow(() -> new CartNotFoundException("Cart not found"));
-        cart.getCartItems().removeIf(item->item.getProduct().getProductId().equals(productId));
+        Product product = productRepository.findProductByProductName(productName)
+                .orElseThrow(() -> new ProductNotFoundException("Product with name '" + productName + "' not found"));
+        cart.getCartItems().removeIf(item->item.getProduct().getProductId().equals(product.getProductId()));
 
         cartRepository.save(cart);
         return  true;
     }
 
-    public CartDTO getCart(Long userId){
-        Cart cart = cartRepository.findByUser_UserId(userId)
+    public CartDTO getCart(String login){
+        Cart cart = cartRepository.findCartByUser_Login(login)
                 .orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
         return  modelMapper.map(cart, CartDTO.class);
     }
 
-    public CartItemDTO updateCartItem(Long userId, Long productId, int quantity, Double price){
-        Cart cart = cartRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+    public CartItemDTO updateCartItem(String login, String productName, int quantity, Double price){
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new UserNotFoundException("User with login '" + login + "' not found"));
+        Cart cart = cartRepository.findByUser_UserId(user.getUserId())
+                .orElseThrow(() -> new CartNotFoundException("Cart not found for user: " + login));
+
+        Product product = productRepository.findProductByProductName(productName)
+                .orElseThrow(() -> new ProductNotFoundException("Product with name '" + productName + "' not found"));
+
 CartItem cartItem=cart.getCartItems().stream()
-        .filter(item->item.getProduct().getProductId().equals(productId))
-        .findFirst().orElseThrow(()->new CartNotFoundException("Cart not found"));
+        .filter(item->item.getProduct().getProductId().equals(product.getProductId()))
+        .findFirst().orElseThrow(()->new CartItemNotFoundException("Cart item not found for product: " + productName));
 cartItem.setQuantity(quantity);
 cartItem.setPrice(price);
 cartRepository.save(cart);
         return  modelMapper.map(cartItem,CartItemDTO.class);
-    }
+        }
 
-}
+        }

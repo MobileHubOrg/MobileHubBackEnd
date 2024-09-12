@@ -1,4 +1,8 @@
 package com.mobilehub.MobileHub.config;
+import com.mobilehub.MobileHub.dto.CartDTO;
+import com.mobilehub.MobileHub.dto.CartItemDTO;
+import com.mobilehub.MobileHub.model.Cart;
+import com.mobilehub.MobileHub.model.CartItem;
 import com.mobilehub.MobileHub.model.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -16,6 +20,15 @@ public class AppConfig {
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.typeMap(Cart.class, CartDTO.class).addMappings(mapper -> {
+            mapper.map(src -> src.getUser().getLogin(), CartDTO::setLogin);
+        });
+
+        // Маппинг Product -> CartItemDTO
+        modelMapper.typeMap(CartItem.class, CartItemDTO.class).addMappings(mapper -> {
+            mapper.map(src -> src.getProduct().getProductName(), CartItemDTO::setProductName);
+        });
         return modelMapper;
     }
 

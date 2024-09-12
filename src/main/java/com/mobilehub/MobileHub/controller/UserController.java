@@ -23,12 +23,12 @@ public class UserController {
         return userService.register(userRegisterDTO);
     }
     @GetMapping("/{userId}")
-    public UserProfileDTO getUser(@PathVariable Long userId) {
-               return userService.getUserProfile(userId);
+    public UserProfileDTO getUser(@PathVariable String login) {
+               return userService.getUserProfile(login);
     }
     @PutMapping("/update/{userId}")
-    public UserDTO updateUser(@PathVariable Long userId, @RequestBody UserEditDTO userEditDTO) {
-        return userService.updateUser(userId, userEditDTO);
+    public UserDTO updateUser(@PathVariable String login, @RequestBody UserEditDTO userEditDTO) {
+        return userService.updateUser(login, userEditDTO);
     }
 
     @DeleteMapping("/removeUser/{login}")

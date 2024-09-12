@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product,Long> {
     Optional<Product> findByProductNameAndCategoryAndBrand(String productName, String category, String brand);
     Optional<Product> findProductByProductId(@NonNull Long productId);
+    Optional<Product> findProductByProductName(@NonNull String productName);
     List<Product> findByCategoryIgnoreCase(String category);
 
     List<Product> findByBrandIgnoreCase(String brand);
