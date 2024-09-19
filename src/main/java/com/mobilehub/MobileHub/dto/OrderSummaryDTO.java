@@ -10,5 +10,5 @@ public class OrderSummaryDTO {
     private Long orderId;
     private LocalDateTime orderDate;
     private String status;
-    private Double totalAmount;
+    private Double total;
 }

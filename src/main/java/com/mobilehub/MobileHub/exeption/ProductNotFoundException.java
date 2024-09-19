@@ -16,6 +16,6 @@ public class ProductNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 2755166764452062685L;
     public ProductNotFoundException(String message) {
         super(message);
-        logger.error("Product not found: {}", message);
+        logger.error("Order not found: {}", message);
     }
 }

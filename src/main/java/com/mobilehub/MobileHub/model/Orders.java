@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,8 +22,9 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
     private String status;
+    private Double total;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 }

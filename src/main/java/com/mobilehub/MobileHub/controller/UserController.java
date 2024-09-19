@@ -33,8 +33,7 @@ public class UserController {
 
     @DeleteMapping("/removeUser/{login}")
     public UserDTO removeUser(@PathVariable String login) {
-        System.out.println("in delete");
-        return userService.removeUser(login);
+               return userService.removeUser(login);
     }
     @PutMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
