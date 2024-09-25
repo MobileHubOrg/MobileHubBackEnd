@@ -93,17 +93,25 @@ public class UserService {
             return null;
         }
     public UserProfileDTO getUserProfile(String login) {
-        User user = userRepository.findByLogin(login.trim())
+        User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new UserNotFoundException("User with login '" + login + "' not found"));
         return modelMapper.map(user, UserProfileDTO.class);
     }
 
     public UserDTO updateUser(String login, UserEditDTO userEditDTO) {
-        User user = userRepository.findByLogin(login.trim())
-                .orElseThrow(() -> new UserNotFoundException("User with login '" + login + "' not found"));
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new UserNotFoundException("User with login '" + userEditDTO.getLogin() + "' not found"));
 
-        modelMapper.map(userEditDTO, user);
+
+        String password = passwordEncoder.encode(userEditDTO.getPassword());
+
+        user.setLogin(userEditDTO.getLogin());
+        user.setRole(userEditDTO.getRole());
+        user.setEmail(userEditDTO.getEmail());
+        user.setPassword(password);
+
         userRepository.save(user);
+
 
         return modelMapper.map(user, UserDTO.class);
     }

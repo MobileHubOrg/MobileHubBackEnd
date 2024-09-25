@@ -6,6 +6,8 @@ import com.mobilehub.MobileHub.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/order")
@@ -24,15 +26,16 @@ public class OrderController {
         return orderService.getOrderDetails(login);
     }
     @DeleteMapping("/deleteOrder/{login}")
-    public Boolean deleteOrder(@PathVariable String login){
-        return  orderService.deleteOrder(login);
+    public Boolean deleteOrder(@RequestParam String login,
+                            @RequestParam Long orderId   ){
+        return  orderService.deleteOrder(login,orderId);
     }
     @GetMapping("/calculateOrder/{login}")
-    public Double calculateOrderTotal(@PathVariable String login){
-        return  orderService.calculateOrderTotal(login);
+    public Double calculateOrderTotal(@PathVariable Long orderId){
+        return  orderService.calculateOrderTotal(orderId);
     }
     @GetMapping("/getOrder/{login}")
-    public OrderDetailsDto getOrdersByUser(@PathVariable String login){
+    public List<OrderDTO> getOrdersByUser(@PathVariable String login){
         return  orderService.getOrdersByUser(login);
     }
     @PutMapping("/updateStatus")
@@ -42,12 +45,15 @@ public class OrderController {
         return orderService.updateOrderStatus(orderId,newStatus);
     }
     @PostMapping ("/addProduct")
-    public ProductDTO addProductToOrder(@RequestBody ProductDTO productDTO){
-        return  orderService.addProductToOrder(productDTO);
+    public ProductDTO addProductToOrder( @RequestParam Long orderId,
+                                         @RequestParam Long productId,
+                                         @RequestParam Integer quantity){
+        return  orderService.addProductToOrder(orderId, productId, quantity);
     }
     @DeleteMapping("/removeProduct")
-    public ProductDTO removeProductFromOrder(@RequestBody ProductDTO productDTO){
-        return  orderService.removeProductFromOrder(productDTO);
+    public ProductDTO removeProductFromOrder(@RequestParam Long  orderId,
+                                             @RequestParam String productName){
+        return  orderService.removeProductFromOrder(orderId, productName);
     }
 
 }

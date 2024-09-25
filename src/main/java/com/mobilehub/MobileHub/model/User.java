@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -29,6 +30,10 @@ public class User {
     private String role;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cart cart;  // Связь с корзиной
+
+    // Поле для хранения нескольких заказов
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Orders> orders = new ArrayList<>();
     public void addRole(String role) {
 
         this.role = role;

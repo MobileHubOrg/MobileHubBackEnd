@@ -73,11 +73,7 @@ List<Product> products=productRepository.findAll();
         return products.stream().map(product -> modelMapper.map(product,ProductSummaryDTO.class)).collect(Collectors.toList());
     }
 
-//    public List<ProductSummaryDTO> filterProducts(String category, String brand, Double minPrice, Double maxPrice) {
-//        List<Product> products=productRepository.findByCategoryAndBrandIgnoreCase(category,brand);
-//
-//        return products.stream().map(product -> modelMapper.map(product,ProductSummaryDTO.class)).collect(Collectors.toList());
-//    }
+
 public List<ProductSummaryDTO> filterProducts(String category, String brand, Double minPrice, Double maxPrice) {
     List<Product> products = productRepository.findProductsByFilters(category, brand, minPrice, maxPrice);
 

@@ -24,10 +24,12 @@ public class UserController {
     }
     @GetMapping("/{userId}")
     public UserProfileDTO getUser(@PathVariable String login) {
-               return userService.getUserProfile(login);
+
+        return userService.getUserProfile(login);
     }
-    @PutMapping("/update/{userId}")
-    public UserDTO updateUser(@PathVariable String login, @RequestBody UserEditDTO userEditDTO) {
+    @PutMapping("/update/{login}")
+    public UserDTO updateUser(@PathVariable String login,
+                              @RequestBody UserEditDTO userEditDTO) {
         return userService.updateUser(login, userEditDTO);
     }
 
